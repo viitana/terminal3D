@@ -11,7 +11,7 @@
 #include <chrono>
 #include <bits/stdc++.h>
 
-#define DELAY 120000
+#define DELAY 10000
 #define PROJNEAR 500.0f
 #define PROJFAR 0.1f
 #define FOV_DEG 60.0f
@@ -359,25 +359,76 @@ void fillTopFlatTriangle(vec2d v1, vec2d v2, vec2d v3)
 }
 
 void fillTri(int x0, int y0, int x1, int y1, int x2, int y2) {
-	std::vector<std::tuple<int, int> > v;
-	v.push_back(std::make_tuple(x0, y0));
-	v.push_back(std::make_tuple(x1, y1));
-	v.push_back(std::make_tuple(x2, y2));
+	//std::vector<std::tuple<int, int> > v;
+	//v.push_back(std::make_tuple(x0, y0));
+	//v.push_back(std::make_tuple(x1, y1));
+	//v.push_back(std::make_tuple(x2, y2));
 
 	vec2d v1, v2, v3;
-	v3.x = std::get<0>(v.back());
-	v3.y = std::get<1>(v.back());
-	v.pop_back();
+	//v3.x = std::get<0>(v.back());
+	//v3.y = std::get<1>(v.back());
+	//v.pop_back();
 
-	v2.x = std::get<0>(v.back());
-	v2.y = std::get<1>(v.back());
-	v.pop_back();
+	//v2.x = std::get<0>(v.back());
+	//v2.y = std::get<1>(v.back());
+	//v.pop_back();
 
-	v1.x = std::get<0>(v.back());
-	v1.y = std::get<1>(v.back());
-	v.pop_back();
+	//v1.x = std::get<0>(v.back());
+	//v1.y = std::get<1>(v.back());
+	//v.pop_back();
 
-	std::sort(v.begin(), v.end(), stSec);
+
+
+	if (y0 <= y1)
+	{
+		if (y0 <= y2)
+		{
+			if (y1 <= y2) // y0 < y1 < y2
+			{
+				v1.x = x0; v1.y = y0;
+				v2.x = x1; v2.y = y1;
+				v3.x = x2; v3.y = y2;
+			}
+			else // y0 < y2 < y1
+			{
+				v1.x = x0; v1.y = y0;
+				v2.x = x2; v2.y = y2;
+				v3.x = x1; v3.y = y1;
+			}
+		}
+		else // y2 < y0 < y1
+		{
+			v1.x = x2; v1.y = y2;
+			v2.x = x0; v2.y = y0;
+			v3.x = x1; v3.y = y1;
+		}
+	}
+	else
+	{
+		if (y0 <= y2) // y1 < y0 < y2
+		{
+			v1.x = x1; v1.y = y1;
+			v2.x = x0; v2.y = y0;
+			v3.x = x2; v3.y = y2;
+		}
+		else
+		{
+			if (y1 <= y2) // y1 < y2 < y0
+			{
+				v1.x = x1; v1.y = y1;
+				v2.x = x2; v2.y = y2;
+				v3.x = x0; v3.y = y0;
+			}
+			else // y2 < y1 < y0
+			{
+				v1.x = x2; v1.y = y2;
+				v2.x = x1; v2.y = y1;
+				v3.x = x0; v3.y = y0;
+			}
+		}
+	}
+
+	//std::sort(v.begin(), v.end(), stSec);
 	//for (int i = 0; i < v.size(); i++)
 	
 	if (v2.y == v3.y)
@@ -430,7 +481,7 @@ int main()
 	cbreak();
 	noecho();
 
-	//curs_set(FALSE);
+	curs_set(FALSE);
 
 	while (1) {
 		getmaxyx(stdscr, max_y, max_x);
@@ -501,13 +552,13 @@ int main()
 				triProjected.p[2].x *= 0.5f * (float)max_x;
 				triProjected.p[2].y *= 0.5f * (float)max_y;
 
-				drawTri(
-					triProjected.p[0].x,
-					triProjected.p[0].y,
-					triProjected.p[1].x,
-					triProjected.p[1].y,
-					triProjected.p[2].x,
-					triProjected.p[2].y);
+				//drawTri(
+				//	triProjected.p[0].x,
+				//	triProjected.p[0].y,
+				//	triProjected.p[1].x,
+				//	triProjected.p[1].y,
+				//	triProjected.p[2].x,
+				//	triProjected.p[2].y);
 
 				//fillTri(
 				//	triProjected.p[0].x,
@@ -522,7 +573,13 @@ int main()
 		//fillTri(10, 10, 20, 30, 60, 30);
 		//drawTri(70, 10, 80, 30, 120, 30);
 
-		fillTri(30, 10, 10, 40, 20, 50);
+		//fillTri(30, 10, 10, 40, 20, 50);
+		//fillTri(10, 40, 30, 10, 20, 50);
+		//fillTri(20, 50, 10, 40, 30, 10);
+		fillTri(30, 10, 20, 50, 10, 40);
+
+
+
 		//fillTri(30, 80, 10, 40, 20, 50);
 		
 		refresh();
