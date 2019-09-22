@@ -78,7 +78,7 @@ void drawGraphics(vec3d camera, vec3d illuminationLight, mesh3d cube, matrix4x4 
 					triProjected.p[1].x,
 					triProjected.p[1].y,
 					triProjected.p[2].x,
-					triProjected.p[2].y, '.');
+					triProjected.p[2].y, '.', conf.settingValues[3]);
 			if (conf.settingValues[0])
 				drawTri(
 					triProjected.p[0].x,
@@ -86,7 +86,7 @@ void drawGraphics(vec3d camera, vec3d illuminationLight, mesh3d cube, matrix4x4 
 					triProjected.p[1].x,
 					triProjected.p[1].y,
 					triProjected.p[2].x,
-					triProjected.p[2].y, '#');
+					triProjected.p[2].y, '#', conf.settingValues[3]);
 		}
 	}
 	refresh();

@@ -6,9 +6,19 @@
 #include <ncurses.h>
 #include "graphics_3d.cpp"
 
-void drawLine(int y1, int x1, int y2, int x2, char c)
+void drawLine(int y1, int x1, int y2, int x2, char c, bool glitch)
 {
 	int x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
+
+    if (glitch && y1 == y2) {
+		for(int X = x1; X <= x2; X++) mvaddch(X, y1, c);
+		return;
+	}
+
+	if (glitch && x1 == x2) {
+		for (int Y = y1; Y <= y2; Y++) mvaddch(x1, Y, c);
+		return;
+	}
 
 	dx = x2 - x1;
 	dy = y2 - y1;
@@ -93,13 +103,13 @@ void drawLine(int y1, int x1, int y2, int x2, char c)
 	}
 }
 
-void drawTri(int x0, int y0, int x1, int y1, int x2, int y2, char c) {
-	drawLine(x0, y0, x1, y1, c);
-	drawLine(x1, y1, x2, y2, c);
-	drawLine(x2, y2, x0, y0, c);
+void drawTri(int x0, int y0, int x1, int y1, int x2, int y2, char c, bool glitch) {
+	drawLine(x0, y0, x1, y1, c, glitch);
+	drawLine(x1, y1, x2, y2, c, glitch);
+	drawLine(x2, y2, x0, y0, c, glitch);
 }
 
-void fillBottomFlatTriangle(vec2d v1, vec2d v2, vec2d v3, char c)
+void fillBottomFlatTriangle(vec2d v1, vec2d v2, vec2d v3, char c, bool glitch)
 {
 	float invslope1 = (float)(v2.x - v1.x) / (float)(v2.y - v1.y);
 	float invslope2 = (float)(v3.x - v1.x) / (float)(v3.y - v1.y);
@@ -109,13 +119,13 @@ void fillBottomFlatTriangle(vec2d v1, vec2d v2, vec2d v3, char c)
 
 	for (int scanlineY = v1.y; scanlineY <= v2.y; scanlineY++)
 	{
-		drawLine((int)curx1, scanlineY, (int)curx2, scanlineY, c);
+		drawLine((int)curx1, scanlineY, (int)curx2, scanlineY, c, glitch);
 		curx1 += invslope1;
 		curx2 += invslope2;
 	}
 }
 
-void fillTopFlatTriangle(vec2d v1, vec2d v2, vec2d v3, char c)
+void fillTopFlatTriangle(vec2d v1, vec2d v2, vec2d v3, char c, bool glitch)
 {
 	float invslope1 = (float)(v3.x - v1.x) / (float)(v3.y - v1.y);
 	float invslope2 = (float)(v3.x - v2.x) / (float)(v3.y - v2.y);
@@ -125,13 +135,13 @@ void fillTopFlatTriangle(vec2d v1, vec2d v2, vec2d v3, char c)
 
 	for (int scanlineY = v3.y; scanlineY > v1.y; scanlineY--)
 	{
-		drawLine((int)curx2, scanlineY, (int)curx1, scanlineY, c);
+		drawLine((int)curx2, scanlineY, (int)curx1, scanlineY, c, glitch);
 		curx1 -= invslope1;
 		curx2 -= invslope2;
 	}
 }
 
-void fillTri(int x0, int y0, int x1, int y1, int x2, int y2, char c)
+void fillTri(int x0, int y0, int x1, int y1, int x2, int y2, char c, bool glitch)
 {
 	vec2d v1, v2, v3;
 
@@ -186,19 +196,19 @@ void fillTri(int x0, int y0, int x1, int y1, int x2, int y2, char c)
 	
 	if (v2.y == v3.y)
 	{
-		fillBottomFlatTriangle(v1, v2, v3, c);
+		fillBottomFlatTriangle(v1, v2, v3, c, glitch);
 	}
 	/* check for trivial case of top-flat triangle */
 	else if (v1.y == v2.y)
 	{
-		fillTopFlatTriangle(v1, v2, v3, c);
+		fillTopFlatTriangle(v1, v2, v3, c, glitch);
 	}
 	else
 	{
 		/* general case - split the triangle in a topflat and bottom-flat one */
 		vec2d v4 = { (int)(v1.x + ((float)(v2.y - v1.y) / (float)(v3.y - v1.y)) * (v3.x - v1.x)), v2.y };
-		fillBottomFlatTriangle(v1, v2, v4, c);
-		fillTopFlatTriangle(v2, v4, v3, c);
+		fillBottomFlatTriangle(v1, v2, v4, c, glitch);
+		fillTopFlatTriangle(v2, v4, v3, c, glitch);
 	}
 }
 
